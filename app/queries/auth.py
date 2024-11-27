@@ -13,7 +13,10 @@ def registration_user(session: Generator, user_create: UserCreate) -> User:
     session.refresh(new_user)
     return new_user
 
-def user_login(session: Generator, login: str, password: str) -> Tuple[Optional[User], str]:
+
+def user_login(
+    session: Generator, login: str, password: str
+) -> Tuple[Optional[User], str]:
     user = get_user_by_username(session, login)
     if user is None:
         return None, "Пользователь не найден"

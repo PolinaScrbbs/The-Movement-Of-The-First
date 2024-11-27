@@ -12,9 +12,9 @@ class App(BaseApp):
             widget.destroy()
 
         login_form = LoginForm(
-            self.content_frame, 
+            self.content_frame,
             app=self,
-            on_switch_to_register=self.show_registration_form
+            on_switch_to_register=self.show_registration_form,
         )
         login_form.pack(fill="both", expand=True)
 

@@ -3,6 +3,7 @@ import tkinter as tk
 from ..datebase import get_session
 from ..queries import user_login
 
+
 class LoginForm(tk.Frame):
     def __init__(self, parent, app, on_switch_to_register):
         super().__init__(parent)
@@ -44,11 +45,7 @@ class LoginForm(tk.Frame):
             tk.messagebox.showerror("Ошибка", "Введите имя пользователя и пароль!")
             return
 
-        user, msg = user_login(
-            get_session(),
-            login=username,
-            password=password
-        )
+        user, msg = user_login(get_session(), login=username, password=password)
 
         if user:
             tk.messagebox.showinfo("Авторизация", msg)
@@ -60,7 +57,7 @@ class LoginForm(tk.Frame):
         """Обновляем интерфейс после успешной авторизации"""
 
         # Удаляем старый navbar
-        if hasattr(app, 'navbar') and app.navbar.winfo_exists():
+        if hasattr(app, "navbar") and app.navbar.winfo_exists():
             app.navbar.destroy()
 
         # Обновляем данные пользователя
@@ -79,9 +76,10 @@ class LoginForm(tk.Frame):
         app.content_frame.pack_forget()
 
         app.navbar.pack(side=tk.TOP, fill=tk.X)  # Navbar всегда наверху
-        app.content_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True)  # Контент в центре
+        app.content_frame.pack(
+            side=tk.TOP, fill=tk.BOTH, expand=True
+        )  # Контент в центре
         app.footer.pack(side=tk.BOTTOM, fill=tk.X)  # Футер внизу
 
         # Перезагружаем основной контент
         app.event_app.show_events()
-

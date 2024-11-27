@@ -37,3 +37,12 @@ class User(Base):
         return bcrypt.checkpw(
             password.encode("utf-8"), self.hashed_password.encode("utf-8")
         )
+
+    def get_full_name_initials(self) -> str:
+        name_parts = self.full_name.split()
+
+        if len(name_parts) >= 2:
+            surname = name_parts[0]
+            initials = "".join([part[0].upper() + "." for part in name_parts[1:]])
+            return f"{surname} {initials}"
+        return self.full_name

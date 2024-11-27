@@ -3,6 +3,7 @@ from typing import Optional
 from PIL import Image, ImageTk
 
 from ..models import User
+from .profile import ProfileApp
 from .event import EventApp
 
 
@@ -106,8 +107,13 @@ class BaseApp(tk.Tk):
                 bg="lightgray",
                 width=30,
                 height=30,
+                cursor="hand2",  # Сделаем аватар кликабельным
             )
             self.profile_label.pack(side=tk.LEFT)
+
+            # При нажатии на аватар переходить в профиль
+            self.profile_label.bind("<Button-1>", self.open_profile)
+
         else:
             # Правый блок без токена (кнопка "Войти")
             self.right_frame = tk.Frame(self.navbar, bg="lightgray")
@@ -117,6 +123,11 @@ class BaseApp(tk.Tk):
                 self.right_frame, text="Войти", command=self.login_action
             )
             self.login_button.pack(side=tk.RIGHT, padx=10)
+
+    def open_profile(self, event):
+        """Открытие окна профиля"""
+        if self.user:
+            ProfileApp(self, self.user)
 
     def switch_page(self, page_name):
         """Переключение контента"""
@@ -139,14 +150,13 @@ class BaseApp(tk.Tk):
         else:  # Для авторизованных пользователей
             if page_name is None:  # Если страница не указана, показываем первую
                 page_name = "Page 1"
-            
+
             label = tk.Label(
                 self.content_frame,
                 text=f"Welcome to {page_name}",
                 font=("Arial", 24),
             )
             label.pack(pady=20)
-
 
     def login_action(self):
         """Действие при нажатии на кнопку 'Войти'"""

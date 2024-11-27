@@ -4,10 +4,12 @@ from sqlalchemy.sql import text
 
 from .user import Base, BaseEnum
 
+
 class EventType(BaseEnum):
     MEETING = "Встреча"
     REPETITION = "Репетиция"
     PROMOVEMENT = "Продвижение"
+
 
 class Event(Base):
     __tablename__ = "events"
@@ -19,10 +21,10 @@ class Event(Base):
     start_at = Column(
         TIMESTAMP(timezone=True),
         server_default=text("TIMEZONE('Europe/Moscow', NOW())"),
-        nullable=False
+        nullable=False,
     )
     end_at = Column(
         TIMESTAMP(timezone=True),
         server_default=text("TIMEZONE('Europe/Moscow', NOW())"),
-        nullable=False
+        nullable=False,
     )
