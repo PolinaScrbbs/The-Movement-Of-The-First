@@ -1,15 +1,17 @@
 import tkinter as tk
 from PIL import Image, ImageTk
 
+from ..models import User
+
 
 class BaseApp(tk.Tk):
-    def __init__(self, token=None):
+    def __init__(self, user=None):
         super().__init__()
         self.title("THE MOVEMENT OF THE FIRST")
         self.geometry("800x600")
 
         # Создаем навбар
-        self.create_navbar(token)
+        self.create_navbar(user)
 
         # Футер
         self.footer = tk.Frame(self, bg="lightgray", height=30)
@@ -29,13 +31,13 @@ class BaseApp(tk.Tk):
 
         self.show_content("Page 1")
 
-    def create_navbar(self, token):
+    def create_navbar(self, user: User):
         """Создание навбара в зависимости от наличия токена"""
         self.navbar = tk.Frame(self, bg="lightgray", height=50)
         self.navbar.pack(side=tk.TOP, fill=tk.X)
 
         self.navbar.columnconfigure(0, weight=1)
-        self.navbar.columnconfigure(1, weight=2)
+        self.navbar.columnconfigure(1, weight=3)
         self.navbar.columnconfigure(2, weight=1)
 
         # Левый блок (иконка и название)
@@ -52,7 +54,7 @@ class BaseApp(tk.Tk):
         )
         self.app_name.pack(side=tk.LEFT, padx=5)
 
-        if token:
+        if user:
             # Центральный блок (кнопки переключения)
             self.center_frame = tk.Frame(self.navbar, bg="lightgray")
             self.center_frame.grid(row=0, column=1)
@@ -83,7 +85,7 @@ class BaseApp(tk.Tk):
 
             self.user_name = tk.Label(
                 self.right_frame,
-                text="PolinaScrbbs",
+                text=user.username,
                 font=("Arial", 12),
                 bg="lightgray",
             )

@@ -1,10 +1,13 @@
 import tkinter as tk
 
+from ..datebase import get_session
+from ..queries import user_login
 
 class LoginForm(tk.Frame):
-    def __init__(self, parent, on_login, on_switch_to_register):
+    def __init__(self, parent, app, on_switch_to_register):
         super().__init__(parent)
-        self.on_login = on_login
+        self.parent = parent
+        self.app = app
         self.on_switch_to_register = on_switch_to_register
 
         self.pack(pady=10)
@@ -41,4 +44,44 @@ class LoginForm(tk.Frame):
             tk.messagebox.showerror("Ошибка", "Введите имя пользователя и пароль!")
             return
 
-        self.on_login(username, password)
+        user, msg = user_login(
+            get_session(),
+            login=username,
+            password=password
+        )
+
+        if user:
+            tk.messagebox.showinfo("Авторизация", msg)
+            self.on_login_success(app=self.app, user=user)
+        else:
+            tk.messagebox.showerror("Ошибка авторизациия", msg)
+
+    def on_login_success(self, app, user):
+        """Обновляем интерфейс после успешной авторизации"""
+
+        # Удаляем старый navbar
+        if hasattr(app, 'navbar') and app.navbar.winfo_exists():
+            app.navbar.destroy()
+
+        # Обновляем данные пользователя
+        app.user = user  # Сохраняем данные пользователя
+
+        # Пересоздаем navbar
+        app.create_navbar(user)
+
+        # Удаляем содержимое основного контента
+        for widget in app.content_frame.winfo_children():
+            widget.destroy()
+
+        # Переупорядочиваем основные виджеты
+        app.navbar.pack_forget()
+        app.footer.pack_forget()
+        app.content_frame.pack_forget()
+
+        app.navbar.pack(side=tk.TOP, fill=tk.X)  # Navbar всегда наверху
+        app.content_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True)  # Контент в центре
+        app.footer.pack(side=tk.BOTTOM, fill=tk.X)  # Футер внизу
+
+        # Перезагружаем основной контент
+        app.show_content("Page 1")
+
