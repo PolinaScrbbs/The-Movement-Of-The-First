@@ -1,5 +1,5 @@
-from .widgets.base import BaseApp
+from .widgets import App
 
 if __name__ == "__main__":
-    app = BaseApp()
+    app = App()
     app.mainloop()
