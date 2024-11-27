@@ -1,17 +1,20 @@
 import tkinter as tk
+from typing import Optional
 from PIL import Image, ImageTk
 
 from ..models import User
+from .event import EventApp
 
 
 class BaseApp(tk.Tk):
-    def __init__(self, user=None):
+    def __init__(self, user: Optional[User] = None):
         super().__init__()
         self.title("THE MOVEMENT OF THE FIRST")
         self.geometry("800x600")
+        self.user = user
 
         # Создаем навбар
-        self.create_navbar(user)
+        self.create_navbar(self.user)
 
         # Футер
         self.footer = tk.Frame(self, bg="lightgray", height=30)
@@ -31,7 +34,12 @@ class BaseApp(tk.Tk):
 
         self.show_content("Page 1")
 
+        # Создаем экземпляр EventApp для управления событиями
+        self.event_app = EventApp(self)
+
     def create_navbar(self, user: User):
+        self.user = user
+
         """Создание навбара в зависимости от наличия токена"""
         self.navbar = tk.Frame(self, bg="lightgray", height=50)
         self.navbar.pack(side=tk.TOP, fill=tk.X)
@@ -54,15 +62,15 @@ class BaseApp(tk.Tk):
         )
         self.app_name.pack(side=tk.LEFT, padx=5)
 
-        if user:
+        if self.user:
             # Центральный блок (кнопки переключения)
             self.center_frame = tk.Frame(self.navbar, bg="lightgray")
             self.center_frame.grid(row=0, column=1)
 
             self.button1 = tk.Button(
                 self.center_frame,
-                text="Page 1",
-                command=lambda: self.switch_page("Page 1"),
+                text="Events",  # Кнопка для отображения событий
+                command=self.event_app.show_events,  # Используем метод из класса EventApp
             )
             self.button2 = tk.Button(
                 self.center_frame,
@@ -85,7 +93,7 @@ class BaseApp(tk.Tk):
 
             self.user_name = tk.Label(
                 self.right_frame,
-                text=user.username,
+                text=self.user.username,
                 font=("Arial", 12),
                 bg="lightgray",
             )
@@ -114,15 +122,31 @@ class BaseApp(tk.Tk):
         """Переключение контента"""
         self.show_content(page_name)
 
-    def show_content(self, page_name):
+    def show_content(self, page_name=None):
         """Обновление основного контента"""
         for widget in self.content_frame.winfo_children():
             widget.destroy()
 
-        label = tk.Label(
-            self.content_frame, text=f"Welcome to {page_name}", font=("Arial", 24)
-        )
-        label.pack(pady=20)
+        if not self.user:  # Если пользователь не авторизован
+            label = tk.Label(
+                self.content_frame,
+                text="Добро пожаловать в TMOTF!\nПожалуйста, авторизуйтесь, чтобы продолжить.",
+                font=("Arial", 18),
+                justify="center",
+                wraplength=600,
+            )
+            label.pack(pady=50)
+        else:  # Для авторизованных пользователей
+            if page_name is None:  # Если страница не указана, показываем первую
+                page_name = "Page 1"
+            
+            label = tk.Label(
+                self.content_frame,
+                text=f"Welcome to {page_name}",
+                font=("Arial", 24),
+            )
+            label.pack(pady=20)
+
 
     def login_action(self):
         """Действие при нажатии на кнопку 'Войти'"""

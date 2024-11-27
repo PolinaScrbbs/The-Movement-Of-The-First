@@ -1,14 +1,7 @@
-from typing import Generator
-from datetime import datetime, timedelta
-from typing import Optional
-import jwt
 import bcrypt
-import pytz
-from sqlalchemy import Column, ForeignKey, Integer, String, Enum
+from sqlalchemy import Column, Integer, String, Enum
 from sqlalchemy.orm import DeclarativeBase
 from enum import Enum as BaseEnum
-
-from config import SECRET_KEY
 
 
 class Base(DeclarativeBase):

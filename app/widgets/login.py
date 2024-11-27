@@ -83,5 +83,5 @@ class LoginForm(tk.Frame):
         app.footer.pack(side=tk.BOTTOM, fill=tk.X)  # Футер внизу
 
         # Перезагружаем основной контент
-        app.show_content("Page 1")
+        app.event_app.show_events()
 

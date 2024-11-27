@@ -1,5 +1,4 @@
 from typing import Generator, Optional, Tuple
-from tkinter import messagebox
 
 from ..models import User
 from .schemes import UserCreate
