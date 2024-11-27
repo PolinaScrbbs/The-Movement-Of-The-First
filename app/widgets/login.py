@@ -1,5 +1,6 @@
 import tkinter as tk
 
+
 class LoginForm(tk.Frame):
     def __init__(self, parent, on_login, on_switch_to_register):
         super().__init__(parent)
@@ -25,8 +26,11 @@ class LoginForm(tk.Frame):
         tk.Button(self, text="Войти", command=self.login).pack(pady=10)
 
         # Кнопка для перехода к регистрации
-        tk.Button(self, text="У вас еще нет аккаунта? Зарегистрируйтесь",
-                  command=self.on_switch_to_register).pack(pady=5)
+        tk.Button(
+            self,
+            text="У вас еще нет аккаунта? Зарегистрируйтесь",
+            command=self.on_switch_to_register,
+        ).pack(pady=5)
 
     def login(self):
         """Обрабатывает авторизацию пользователя."""

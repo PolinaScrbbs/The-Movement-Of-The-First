@@ -121,3 +121,7 @@ class BaseApp(tk.Tk):
             self.content_frame, text=f"Welcome to {page_name}", font=("Arial", 24)
         )
         label.pack(pady=20)
+
+    def login_action(self):
+        """Действие при нажатии на кнопку 'Войти'"""
+        self.show_login_form()
