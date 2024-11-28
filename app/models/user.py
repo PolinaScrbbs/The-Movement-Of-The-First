@@ -1,6 +1,6 @@
 import bcrypt
 from sqlalchemy import Column, Integer, String, Enum
-from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy.orm import DeclarativeBase, relationship
 from enum import Enum as BaseEnum
 
 
@@ -27,6 +27,10 @@ class User(Base):
     hashed_password = Column(String(512), nullable=False)
     full_name = Column(String(50), nullable=False)
     role = Column(Enum(Role), default=Role.STUDENT, nullable=False)
+    stars = Column(Integer, default=0, nullable=False)
+    avatar_url = Column(String, default=None)
+
+    created_events = relationship("Event", back_populates="creator")
 
     def set_password(self, password: str) -> None:
         self.hashed_password = bcrypt.hashpw(

@@ -265,6 +265,7 @@ class EventApp:
             command=lambda: self.save_event(
                 title_entry.get(),
                 event_type_combobox.get(),  # Получаем выбранное значение
+                self.app.user.id,
                 start_at_date.get_date(),  # Получаем выбранную дату
                 start_at_time_combobox.get(),  # Получаем выбранное время начала
                 end_at_date.get_date(),  # Получаем выбранную дату
@@ -279,6 +280,7 @@ class EventApp:
         self,
         title: str,
         event_type: str,
+        current_user_id: int,
         start_date: datetime.date,
         start_time: str,
         end_date: datetime.date,
@@ -310,6 +312,7 @@ class EventApp:
                 title=title,
                 description=description,
                 event_type=event_type,
+                creator_id=current_user_id,
                 start_at=start_at,
                 end_at=end_at,
             )

@@ -53,7 +53,7 @@ class BaseApp(tk.Tk):
         self.left_frame = tk.Frame(self.navbar, bg="lightgray")
         self.left_frame.grid(row=0, column=0, sticky="w", padx=10)
 
-        icon_image = Image.open("app/assets/Sunday.png").resize((30, 30))
+        icon_image = Image.open("app/assets/logo.jpg").resize((225, 75))
         self.icon = ImageTk.PhotoImage(icon_image)
         self.icon_label = tk.Label(self.left_frame, image=self.icon, bg="lightgray")
         self.icon_label.pack(side=tk.LEFT)
@@ -93,6 +93,7 @@ class BaseApp(tk.Tk):
             self.right_frame = tk.Frame(self.navbar, bg="lightgray")
             self.right_frame.grid(row=0, column=2, sticky="e", padx=10)
 
+            # Имя пользователя
             self.user_name = tk.Label(
                 self.right_frame,
                 text=self.user.username,
@@ -101,7 +102,18 @@ class BaseApp(tk.Tk):
             )
             self.user_name.pack(side=tk.LEFT, padx=5)
 
+            # Проверка на наличие аватарки
+            if self.user.avatar_url:
+                # Загружаем аватарку пользователя
+                icon_image = Image.open(self.user.avatar_url).resize((30, 30))
+            else:
+                # Используем изображение по умолчанию
+                icon_image = Image.open("app/assets/default.jpg").resize((30, 30))
+
+            # Конвертируем изображение для Tkinter
             self.profile_icon = ImageTk.PhotoImage(icon_image)
+
+            # Добавляем метку с аватаркой
             self.profile_label = tk.Label(
                 self.right_frame,
                 image=self.profile_icon,
@@ -124,6 +136,13 @@ class BaseApp(tk.Tk):
                 self.right_frame, text="Войти", command=self.login_action
             )
             self.login_button.pack(side=tk.RIGHT, padx=10)
+
+    def refresh_navbar_avatar(self, avatar_path):
+        """Обновляет аватар в навбаре"""
+        # Обновляем аватарку пользователя
+        icon_image = Image.open(avatar_path).resize((30, 30))
+        self.profile_icon = ImageTk.PhotoImage(icon_image)
+        self.profile_label.configure(image=self.profile_icon)
 
     def open_profile(self, event):
         """Открытие окна профиля"""

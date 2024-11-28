@@ -1,5 +1,6 @@
-from sqlalchemy import Column, String, Integer, Enum, TIMESTAMP
+from sqlalchemy import Column, ForeignKey, String, Integer, Enum, TIMESTAMP
 from sqlalchemy.sql import text
+from sqlalchemy.orm import relationship
 
 
 from .user import Base, BaseEnum
@@ -18,6 +19,7 @@ class Event(Base):
     title = Column(String(64), nullable=False)
     description = Column(String(128))
     type = Column(Enum(EventType), default=EventType.MEETING, nullable=False)
+    creator_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     start_at = Column(
         TIMESTAMP(timezone=True),
         server_default=text("TIMEZONE('Europe/Moscow', NOW())"),
@@ -28,3 +30,5 @@ class Event(Base):
         server_default=text("TIMEZONE('Europe/Moscow', NOW())"),
         nullable=False,
     )
+
+    creator = relationship("User", back_populates="created_events")

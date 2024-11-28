@@ -16,6 +16,7 @@ def create_event(
     title: str,
     description: str,
     event_type: str,
+    creator_id: int,
     start_at: datetime,
     end_at: datetime,
 ) -> Event:
@@ -24,6 +25,7 @@ def create_event(
         title=title,
         description=description,
         type=EventType[event_type],
+        creator_id=creator_id,
         start_at=start_at,
         end_at=end_at,
     )
