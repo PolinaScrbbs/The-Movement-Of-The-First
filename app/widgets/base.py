@@ -2,7 +2,7 @@ import tkinter as tk
 from typing import Optional
 from PIL import Image, ImageTk
 
-from ..models import User
+from ..models import User, Role
 from .profile import ProfileApp
 from .event import EventApp
 
@@ -14,7 +14,7 @@ class BaseApp(tk.Tk):
         self.geometry("800x600")
         self.user = user
 
-        # Создаем навбар
+        # Навбар
         self.create_navbar(self.user)
 
         # Футер
@@ -35,7 +35,7 @@ class BaseApp(tk.Tk):
 
         self.show_content("Page 1")
 
-        # Создаем экземпляр EventApp для управления событиями
+        # Экземпляр EventApp для управления событиями
         self.event_app = EventApp(self)
 
     def create_navbar(self, user: User):
@@ -64,29 +64,30 @@ class BaseApp(tk.Tk):
         self.app_name.pack(side=tk.LEFT, padx=5)
 
         if self.user:
-            # Центральный блок (кнопки переключения)
-            self.center_frame = tk.Frame(self.navbar, bg="lightgray")
-            self.center_frame.grid(row=0, column=1)
+            if self.user.role == Role.ADMIN:
+                # Центральный блок (кнопки переключения для администратора)
+                self.center_frame = tk.Frame(self.navbar, bg="lightgray")
+                self.center_frame.grid(row=0, column=1)
 
-            self.button1 = tk.Button(
-                self.center_frame,
-                text="Events",  # Кнопка для отображения событий
-                command=self.event_app.show_events,  # Используем метод из класса EventApp
-            )
-            self.button2 = tk.Button(
-                self.center_frame,
-                text="Page 2",
-                command=lambda: self.switch_page("Page 2"),
-            )
-            self.button3 = tk.Button(
-                self.center_frame,
-                text="Page 3",
-                command=lambda: self.switch_page("Page 3"),
-            )
+                self.button1 = tk.Button(
+                    self.center_frame,
+                    text="Events",  # Кнопка для отображения событий
+                    command=self.event_app.show_events,  # Используем метод из класса EventApp
+                )
+                self.button2 = tk.Button(
+                    self.center_frame,
+                    text="Page 2",
+                    command=lambda: self.switch_page("Page 2"),
+                )
+                self.button3 = tk.Button(
+                    self.center_frame,
+                    text="Page 3",
+                    command=lambda: self.switch_page("Page 3"),
+                )
 
-            self.button1.pack(side=tk.LEFT, padx=5)
-            self.button2.pack(side=tk.LEFT, padx=5)
-            self.button3.pack(side=tk.LEFT, padx=5)
+                self.button1.pack(side=tk.LEFT, padx=5)
+                self.button2.pack(side=tk.LEFT, padx=5)
+                self.button3.pack(side=tk.LEFT, padx=5)
 
             # Правый блок (профиль и ник)
             self.right_frame = tk.Frame(self.navbar, bg="lightgray")
