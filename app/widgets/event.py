@@ -3,10 +3,16 @@ from tkinter import ttk
 from tkinter import messagebox
 from tkcalendar import DateEntry
 from datetime import datetime
+import pytz
 
 
 from ..datebase import get_session
-from ..queries import get_events, create_event
+from ..queries import (
+    get_events,
+    create_event,
+    create_event_mark,
+    check_event_mark_exists,
+)
 from ..models import Role, EventType
 
 
@@ -138,9 +144,11 @@ class EventApp:
         """Метод для отображения подробностей события"""
         event = self.get_event_by_id(event_id)
 
+        # Очистка фрейма
         for widget in self.content_frame.winfo_children():
             widget.destroy()
 
+        # Заголовок события
         details_label = tk.Label(
             self.content_frame,
             text=f"Details for {event.title}",
@@ -148,6 +156,7 @@ class EventApp:
         )
         details_label.pack(pady=20)
 
+        # Описание события
         description_label = tk.Label(
             self.content_frame,
             text=f"Description: {event.description}",
@@ -157,6 +166,7 @@ class EventApp:
         )
         description_label.pack(pady=10)
 
+        # Дата события
         date_label = tk.Label(
             self.content_frame,
             text=f"Date: {event.start_at}",
@@ -166,10 +176,40 @@ class EventApp:
         )
         date_label.pack(pady=10)
 
+        # Проверка времени события и добавление кнопки "Отметиться"
+        now = datetime.now(pytz.timezone("Europe/Moscow"))
+        start_at = event.start_at  # Предполагается, что это объект datetime
+        end_at = event.end_at  # Аналогично, объект datetime
+
+        # Проверка условий: текущий пользователь простой и событие в данный момент
+        if (
+            self.app.user
+            and not check_event_mark_exists(get_session(), self.app.user.id, event_id)
+            and start_at <= now <= end_at
+        ):
+            check_in_button = tk.Button(
+                self.content_frame,
+                text="Отметиться",
+                command=lambda: self.mark_attendance(event_id),
+            )
+            check_in_button.pack(pady=20)
+
+        # Кнопка "Назад"
         back_button = tk.Button(
             self.content_frame, text="Back", command=self.show_events
         )
         back_button.pack(pady=20)
+
+    def mark_attendance(self, event_id):
+        """Метод для отметки пользователя на событии"""
+        try:
+            # Здесь должна быть логика для отметки пользователя
+            # Например, создание записи в базе данных
+            create_event_mark(get_session(), event_id, self.app.user.id)
+            tk.messagebox.showinfo("Success", "Вы успешно отметились!")
+            self.show_event_details(event_id)
+        except Exception as e:
+            tk.messagebox.showerror("Error", f"Ошибка: {e}")
 
     def get_event_by_id(self, event_id):
         """Получаем событие по ID"""
@@ -329,7 +369,6 @@ class EventApp:
         # Загружаем события из базы данных
         session = get_session()
         events = get_events(session)
-        session.close()
 
         # Обновляем общее количество страниц
         self.total_pages = (

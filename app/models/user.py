@@ -31,6 +31,7 @@ class User(Base):
     avatar_url = Column(String, default=None)
 
     created_events = relationship("Event", back_populates="creator")
+    marks = relationship("EventMark", back_populates="user")
 
     def set_password(self, password: str) -> None:
         self.hashed_password = bcrypt.hashpw(
