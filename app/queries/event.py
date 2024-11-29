@@ -3,7 +3,7 @@ from typing import List
 from sqlalchemy import select, exists
 from sqlalchemy.orm import Session
 
-from ..models import User, Event, EventType, EventMark
+from ..models import User, Event, EventType, EventMark, EventStar
 
 
 def get_events(session: Session) -> List[Event]:
@@ -43,7 +43,6 @@ def create_event_mark(session: Session, event_id: int, user_id: int) -> None:
     )
     session.add(new_event_mark)
     session.commit()
-    session.refresh(new_event_mark)
 
 
 def check_event_mark_exists(session, user_id, event_id):
@@ -57,7 +56,7 @@ def check_event_mark_exists(session, user_id, event_id):
 def get_event_attendees(session: Session, event_id):
     try:
         attendees = (
-            session.query(User.username, User.full_name, EventMark.created_at)
+            session.query(User.id, User.username, User.full_name, EventMark.created_at)
             .join(EventMark, User.id == EventMark.user_id)
             .filter(EventMark.event_id == event_id)
             .all()
@@ -65,3 +64,20 @@ def get_event_attendees(session: Session, event_id):
         return attendees
     finally:
         session.close()
+
+
+def create_event_stars(session: Session, event_id: int, user_id: int) -> None:
+    new_event_star = EventStar(
+        event_id=event_id,
+        user_id=user_id,
+    )
+    session.add(new_event_star)
+    session.commit()
+
+
+def check_event_star_exists(session, user_id, event_id):
+    stmt = select(
+        exists().where(EventStar.user_id == user_id, EventStar.event_id == event_id)
+    )
+    result = session.execute(stmt).scalar()
+    return result

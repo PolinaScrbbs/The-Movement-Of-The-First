@@ -27,11 +27,11 @@ class User(Base):
     hashed_password = Column(String(512), nullable=False)
     full_name = Column(String(50), nullable=False)
     role = Column(Enum(Role), default=Role.STUDENT, nullable=False)
-    stars = Column(Integer, default=0, nullable=False)
     avatar_url = Column(String, default=None)
 
     created_events = relationship("Event", back_populates="creator")
     marks = relationship("EventMark", back_populates="user")
+    stars = relationship("EventStar", back_populates="user")
 
     def set_password(self, password: str) -> None:
         self.hashed_password = bcrypt.hashpw(

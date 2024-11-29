@@ -41,6 +41,7 @@ class Event(Base):
 
     creator = relationship("User", back_populates="created_events")
     marks = relationship("EventMark", back_populates="event")
+    stars = relationship("EventStar", back_populates="event")
 
 
 class EventMark(Base):
@@ -55,7 +56,29 @@ class EventMark(Base):
         nullable=False,
     )
 
-    __table_args__ = (UniqueConstraint("event_id", "user_id", name="uq_event_user"),)
+    __table_args__ = (
+        UniqueConstraint("event_id", "user_id", name="uq_marks_event_user"),
+    )
 
     event = relationship("Event", back_populates="marks")
     user = relationship("User", back_populates="marks")
+
+
+class EventStar(Base):
+    __tablename__ = "event_stars"
+
+    id = Column(Integer, primary_key=True)
+    event_id = Column(Integer, ForeignKey("events.id"), nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    created_at = Column(
+        TIMESTAMP(timezone=True),
+        server_default=text("TIMEZONE('Europe/Moscow', NOW())"),
+        nullable=False,
+    )
+
+    __table_args__ = (
+        UniqueConstraint("event_id", "user_id", name="uq_stars_event_user"),
+    )
+
+    event = relationship("Event", back_populates="stars")
+    user = relationship("User", back_populates="stars")

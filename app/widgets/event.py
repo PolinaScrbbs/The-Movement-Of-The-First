@@ -13,6 +13,8 @@ from ..queries import (
     create_event_mark,
     check_event_mark_exists,
     get_event_attendees,
+    check_event_star_exists,
+    create_event_stars,
 )
 from ..models import Role, EventType
 
@@ -181,8 +183,8 @@ class EventApp:
 
         # Проверка времени события и добавление кнопки "Отметиться"
         now = datetime.now(pytz.timezone("Europe/Moscow"))
-        start_at = event.start_at  # Предполагается, что это объект datetime
-        end_at = event.end_at  # Аналогично, объект datetime
+        start_at = event.start_at
+        end_at = event.end_at
 
         if (
             self.app.user
@@ -207,36 +209,68 @@ class EventApp:
             attendees_label.pack(pady=10)
 
             # Получение списка отметившихся
-            attendees = get_event_attendees(
-                get_session(), event_id
-            )  # Метод для получения пользователей
+            attendees = get_event_attendees(get_session(), event_id)
+
             if attendees:
                 # Создание Treeview только если есть отметившиеся
+                tree_frame = tk.Frame(self.content_frame)
+                tree_frame.pack(fill="x", pady=10)
+
                 tree = ttk.Treeview(
-                    self.content_frame,
-                    columns=("username", "fullname", "timestamp"),
+                    tree_frame,
+                    columns=("username", "fullname", "timestamp", "action"),
                     show="headings",
                 )
                 tree.heading("username", text="Username")
                 tree.heading("fullname", text="Full Name")
                 tree.heading("timestamp", text="Marked At")
+                tree.heading("action", text="Action")
                 tree.column("username", width=150)
                 tree.column("fullname", width=200)
                 tree.column("timestamp", width=150)
-                tree.pack(fill="x", pady=10)
+                tree.column("action", width=100)
+                tree.pack(side="left", fill="x")
 
+                # Добавление прокрутки
+                scrollbar = ttk.Scrollbar(
+                    tree_frame, orient="vertical", command=tree.yview
+                )
+                scrollbar.pack(side="right", fill="y")
+                tree.configure(yscrollcommand=scrollbar.set)
+
+                # Добавление данных
                 for attendee in attendees:
-                    tree.insert(
+                    has_star = check_event_star_exists(
+                        get_session(), attendee.id, event_id
+                    )
+
+                    action_text = "Звезда выдана" if has_star else "Добавить звезду"
+                    button_state = tk.DISABLED if has_star else tk.NORMAL
+
+                    row_id = tree.insert(
                         "",
                         "end",
                         values=(
                             attendee.username,
                             attendee.full_name,
                             attendee.created_at.strftime("%H:%M:%S %Y-%m-%d"),
+                            action_text,
                         ),
                     )
+
+                    if not has_star:
+                        btn = tk.Button(
+                            self.content_frame,
+                            text="Добавить звезду",
+                            state=button_state,
+                            command=lambda aid=attendee.id: self.add_star(
+                                event_id, aid, tree, row_id
+                            ),
+                        )
+                        tree.item(row_id, tags=(row_id,))
+                        tree.tag_bind(row_id, "<Double-1>", lambda e, b=btn: b.invoke())
             else:
-                # Если никто не отметился, отображается сообщение
+                # Если никто не отметился
                 no_attendees_label = tk.Label(
                     self.content_frame,
                     text="Список отметок пуст",
@@ -250,6 +284,11 @@ class EventApp:
             self.content_frame, text="Back", command=self.show_events
         )
         back_button.pack(pady=20)
+
+    def add_star(self, event_id, user_id, tree, row_id):
+        """Добавить звезду пользователю"""
+        create_event_stars(get_session(), event_id, user_id)
+        tree.set(row_id, column="action", value="Звезда выдана")
 
     def mark_attendance(self, event_id):
         """Метод для отметки пользователя на событии"""

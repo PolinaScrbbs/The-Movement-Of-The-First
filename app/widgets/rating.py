@@ -56,12 +56,16 @@ class RatingApp:
         users_page = users[start_idx:end_idx]
 
         # Заполняем таблицу пользователями текущей страницы
-        for idx, user in enumerate(users_page):
+        for idx, (username, full_name, stars) in enumerate(users_page):
             row_tag = "oddrow" if idx % 2 == 0 else "evenrow"
             self.rating_tree.insert(
                 "",
                 "end",
-                values=(user.username, user.full_name, user.stars),
+                values=(
+                    username,
+                    full_name,
+                    stars if stars else 0,
+                ),  # Показываем 0, если звезд нет
                 tags=(row_tag,),
             )
 
