@@ -8,6 +8,7 @@ from ..models import Event, EventType
 def get_events(session: Generator) -> List[Event]:
     result = session.execute(select(Event).order_by(Event.title))
     events = result.scalars().all()
+    session.close()
     return events
 
 
@@ -32,4 +33,5 @@ def create_event(
     session.add(new_event)
     session.commit()
     session.refresh(new_event)
+    session.close()
     return new_event
