@@ -3,7 +3,7 @@ from typing import List
 from sqlalchemy import select, exists
 from sqlalchemy.orm import Session
 
-from ..models import Event, EventType, EventMark
+from ..models import User, Event, EventType, EventMark
 
 
 def get_events(session: Session) -> List[Event]:
@@ -52,3 +52,16 @@ def check_event_mark_exists(session, user_id, event_id):
     )
     result = session.execute(stmt).scalar()
     return result
+
+
+def get_event_attendees(session: Session, event_id):
+    try:
+        attendees = (
+            session.query(User.username, User.full_name, EventMark.created_at)
+            .join(EventMark, User.id == EventMark.user_id)
+            .filter(EventMark.event_id == event_id)
+            .all()
+        )
+        return attendees
+    finally:
+        session.close()

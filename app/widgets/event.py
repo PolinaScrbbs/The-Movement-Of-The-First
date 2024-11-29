@@ -12,6 +12,7 @@ from ..queries import (
     create_event,
     create_event_mark,
     check_event_mark_exists,
+    get_event_attendees,
 )
 from ..models import Role, EventType
 
@@ -140,6 +141,8 @@ class EventApp:
             print(f"Selected event ID: {event_id}")
             self.show_event_details(event_id)
 
+    from tkinter import ttk
+
     def show_event_details(self, event_id):
         """Метод для отображения подробностей события"""
         event = self.get_event_by_id(event_id)
@@ -181,9 +184,9 @@ class EventApp:
         start_at = event.start_at  # Предполагается, что это объект datetime
         end_at = event.end_at  # Аналогично, объект datetime
 
-        # Проверка условий: текущий пользователь простой и событие в данный момент
         if (
             self.app.user
+            and self.app.user.role == Role.STUDENT
             and not check_event_mark_exists(get_session(), self.app.user.id, event_id)
             and start_at <= now <= end_at
         ):
@@ -193,6 +196,54 @@ class EventApp:
                 command=lambda: self.mark_attendance(event_id),
             )
             check_in_button.pack(pady=20)
+
+        # Если пользователь - администратор, отображаем список отметившихся
+        if self.app.user and self.app.user.role == Role.ADMIN:
+            attendees_label = tk.Label(
+                self.content_frame,
+                text="Отметившиеся пользователи:",
+                font=("Arial", 14, "bold"),
+            )
+            attendees_label.pack(pady=10)
+
+            # Получение списка отметившихся
+            attendees = get_event_attendees(
+                get_session(), event_id
+            )  # Метод для получения пользователей
+            if attendees:
+                # Создание Treeview только если есть отметившиеся
+                tree = ttk.Treeview(
+                    self.content_frame,
+                    columns=("username", "fullname", "timestamp"),
+                    show="headings",
+                )
+                tree.heading("username", text="Username")
+                tree.heading("fullname", text="Full Name")
+                tree.heading("timestamp", text="Marked At")
+                tree.column("username", width=150)
+                tree.column("fullname", width=200)
+                tree.column("timestamp", width=150)
+                tree.pack(fill="x", pady=10)
+
+                for attendee in attendees:
+                    tree.insert(
+                        "",
+                        "end",
+                        values=(
+                            attendee.username,
+                            attendee.full_name,
+                            attendee.created_at.strftime("%H:%M:%S %Y-%m-%d"),
+                        ),
+                    )
+            else:
+                # Если никто не отметился, отображается сообщение
+                no_attendees_label = tk.Label(
+                    self.content_frame,
+                    text="Список отметок пуст",
+                    font=("Arial", 12),
+                    anchor="w",
+                )
+                no_attendees_label.pack(pady=10)
 
         # Кнопка "Назад"
         back_button = tk.Button(
