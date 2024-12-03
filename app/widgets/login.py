@@ -112,14 +112,12 @@ class LoginForm(tk.Frame):
 
         # Переупорядочиваем основные виджеты
         app.navbar.pack_forget()
-        app.footer.pack_forget()
         app.content_frame.pack_forget()
 
         app.navbar.pack(side=tk.TOP, fill=tk.X)  # Navbar всегда наверху
         app.content_frame.pack(
             side=tk.TOP, fill=tk.BOTH, expand=True
         )  # Контент в центре
-        app.footer.pack(side=tk.BOTTOM, fill=tk.X)  # Футер внизу
 
         # Перезагружаем основной контент
         app.event_app.show_events()
