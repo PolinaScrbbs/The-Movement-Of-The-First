@@ -1,7 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
-from tkinter import font
 from tkcalendar import DateEntry
 from datetime import datetime
 import pytz
@@ -162,8 +161,6 @@ class EventApp:
             print(f"Selected event ID: {event_id}")
             self.show_event_details(event_id)
 
-    from tkinter import ttk
-
     def show_event_details(self, event_id):
         """Метод для отображения подробностей события"""
         event = self.get_event_by_id(event_id)
@@ -172,33 +169,57 @@ class EventApp:
         for widget in self.content_frame.winfo_children():
             widget.destroy()
 
+        # Настройка общего фона
+        self.content_frame.config(bg="#1a76b9")
+
         # Заголовок события
         details_label = tk.Label(
             self.content_frame,
             text=f"Details for {event.title}",
             font=("Arial", 16, "bold"),
+            bg="#1a76b9",
+            fg="#ffffff",
         )
-        details_label.pack(pady=20)
+        details_label.place(relx=0.5, rely=0.1, anchor="center")
 
         # Описание события
         description_label = tk.Label(
             self.content_frame,
             text=f"Description: {event.description}",
-            font=("Arial", 12),
+            font=("Arial", 12, "bold"),  # Жирный текст
+            bg="#1a76b9",
+            fg="#ffffff",
             anchor="w",
             justify="left",
+            wraplength=400,  # Перенос текста, если он слишком длинный
         )
-        description_label.pack(pady=10)
+        description_label.place(relx=0.5, rely=0.2, anchor="center")
 
-        # Дата события
-        date_label = tk.Label(
+        # Форматированная дата начала
+        formatted_start_date = event.start_at.strftime("%H:%M %d.%m.%Y")
+        start_date_label = tk.Label(
             self.content_frame,
-            text=f"Date: {event.start_at}",
-            font=("Arial", 12),
+            text=f"Start At: {formatted_start_date}",
+            font=("Arial", 12, "bold"),  # Жирный текст
+            bg="#1a76b9",
+            fg="#ffffff",
             anchor="w",
             justify="left",
         )
-        date_label.pack(pady=10)
+        start_date_label.place(relx=0.5, rely=0.3, anchor="center")
+
+        # Форматированная дата окончания
+        formatted_end_date = event.end_at.strftime("%H:%M %d.%m.%Y")
+        end_date_label = tk.Label(
+            self.content_frame,
+            text=f"End At: {formatted_end_date}",
+            font=("Arial", 12, "bold"),  # Жирный текст
+            bg="#1a76b9",
+            fg="#ffffff",
+            anchor="w",
+            justify="left",
+        )
+        end_date_label.place(relx=0.5, rely=0.4, anchor="center")
 
         # Проверка времени события и добавление кнопки "Отметиться"
         now = datetime.now(pytz.timezone("Europe/Moscow"))
@@ -215,8 +236,10 @@ class EventApp:
                 self.content_frame,
                 text="Отметиться",
                 command=lambda: self.mark_attendance(event_id),
+                bg="#ffffff",
+                fg="#1a76b9",
             )
-            check_in_button.pack(pady=20)
+            check_in_button.place(relx=0.5, rely=0.5, anchor="center")
 
         # Если пользователь - администратор, отображаем список отметившихся
         if self.app.user and self.app.user.role == Role.ADMIN:
@@ -224,36 +247,45 @@ class EventApp:
                 self.content_frame,
                 text="Отметившиеся пользователи:",
                 font=("Arial", 14, "bold"),
+                bg="#1a76b9",
+                fg="#ffffff",
             )
-            attendees_label.pack(pady=10)
+            attendees_label.place(relx=0.5, rely=0.5, anchor="center")
 
             # Получение списка отметившихся
             attendees = get_event_attendees(get_session(), event_id)
 
             if attendees:
                 # Создание Treeview только если есть отметившиеся
-                tree_frame = tk.Frame(self.content_frame)
-                tree_frame.pack(fill="x", pady=10)
+                tree_frame = tk.Frame(self.content_frame, bg="#1a76b9")
+                tree_frame.place(relx=0.5, rely=0.7, anchor="center", relwidth=0.8, relheight=0.3)
+
+                style = ttk.Style()
+                style.configure("Treeview", rowheight=25)
+                style.configure(
+                    "Treeview.Heading",
+                    font=("Arial", 12, "bold"),
+                    anchor="center",  # Выровнять заголовки по центру
+                )
+                style.configure("Treeview", font=("Arial", 10), anchor="center")  # Выровнять строки
 
                 tree = ttk.Treeview(
                     tree_frame,
                     columns=("username", "fullname", "timestamp", "action"),
                     show="headings",
                 )
-                tree.heading("username", text="Username")
-                tree.heading("fullname", text="Full Name")
-                tree.heading("timestamp", text="Marked At")
-                tree.heading("action", text="Action")
-                tree.column("username", width=150)
-                tree.column("fullname", width=200)
-                tree.column("timestamp", width=150)
-                tree.column("action", width=100)
-                tree.pack(side="left", fill="x")
+                tree.heading("username", text="Username", anchor="center")
+                tree.heading("fullname", text="Full Name", anchor="center")
+                tree.heading("timestamp", text="Marked At", anchor="center")
+                tree.heading("action", text="Action", anchor="center")
+                tree.column("username", width=150, anchor="center")
+                tree.column("fullname", width=200, anchor="center")
+                tree.column("timestamp", width=150, anchor="center")
+                tree.column("action", width=100, anchor="center")
+                tree.pack(side="left", fill="both", expand=True)
 
                 # Добавление прокрутки
-                scrollbar = ttk.Scrollbar(
-                    tree_frame, orient="vertical", command=tree.yview
-                )
+                scrollbar = ttk.Scrollbar(tree_frame, orient="vertical", command=tree.yview)
                 scrollbar.pack(side="right", fill="y")
                 tree.configure(yscrollcommand=scrollbar.set)
 
@@ -277,32 +309,31 @@ class EventApp:
                         ),
                     )
 
-                    if not has_star:
-                        btn = tk.Button(
-                            self.content_frame,
-                            text="Добавить звезду",
-                            state=button_state,
-                            command=lambda aid=attendee.id: self.add_star(
-                                event_id, aid, tree, row_id
-                            ),
-                        )
-                        tree.item(row_id, tags=(row_id,))
-                        tree.tag_bind(row_id, "<Double-1>", lambda e, b=btn: b.invoke())
             else:
                 # Если никто не отметился
                 no_attendees_label = tk.Label(
                     self.content_frame,
                     text="Список отметок пуст",
                     font=("Arial", 12),
+                    bg="#1a76b9",
+                    fg="#ffffff",
                     anchor="w",
                 )
-                no_attendees_label.pack(pady=10)
+                no_attendees_label.place(relx=0.5, rely=0.6, anchor="center")
 
         # Кнопка "Назад"
         back_button = tk.Button(
-            self.content_frame, text="Back", command=self.show_events
+            self.content_frame,
+            text="Back",
+            font=("Arial", 10, "bold"),
+            command=self.show_events,
+            bg="#ffffff",
+            width=10,
+            height=1
         )
-        back_button.pack(pady=20)
+        back_button.place(relx=0.5, rely=0.9, anchor="center")
+
+
 
     def add_star(self, event_id, user_id, tree, row_id):
         """Добавить звезду пользователю"""
