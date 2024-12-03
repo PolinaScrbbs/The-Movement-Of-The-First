@@ -8,42 +8,94 @@ from ..queries.schemes import UserCreate
 
 class RegistrationForm(tk.Frame):
     def __init__(self, parent, on_switch_to_login):
-        super().__init__(parent)
+        super().__init__(parent, bg="#1a76b9")
         self.on_switch_to_login = on_switch_to_login
 
-        self.pack(pady=20)
+        # Установка центра контейнера
+        self.pack(expand=True, fill="both")  # Расширение фрейма
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=1)
+
+        # Основной контейнер для выравнивания содержимого
+        container = tk.Frame(self, bg="#1a76b9")
+        container.grid(row=0, column=0)
+        container.grid_columnconfigure(0, weight=1)
 
         # Заголовок
-        tk.Label(self, text="Регистрация", font=("Arial", 18)).pack(pady=10)
+        tk.Label(
+            container,
+            text="Регистрация",
+            font=("Arial", 18),
+            bg="#1a76b9",
+            fg="#ffffff",
+        ).grid(row=0, column=0, pady=20)
 
         # Поле для имени пользователя
-        tk.Label(self, text="Имя пользователя").pack(anchor="w", padx=5)
-        self.username_entry = tk.Entry(self)
-        self.username_entry.pack(fill="x", padx=5, pady=5)
+        tk.Label(
+            container,
+            text="Имя пользователя",
+            font=("Arial", 12),
+            bg="#1a76b9",
+            fg="#ffffff",
+        ).grid(row=1, column=0, sticky="w", padx=20)
+        self.username_entry = tk.Entry(container, width=30, font=("Arial", 14))
+        self.username_entry.grid(row=2, column=0, pady=10, padx=20)
 
         # Поле для полного имени
-        tk.Label(self, text="Полное имя").pack(anchor="w", padx=5)
-        self.full_name_entry = tk.Entry(self)
-        self.full_name_entry.pack(fill="x", padx=5, pady=5)
+        tk.Label(
+            container,
+            text="Полное имя",
+            font=("Arial", 12),
+            bg="#1a76b9",
+            fg="#ffffff",
+        ).grid(row=3, column=0, sticky="w", padx=20)
+        self.full_name_entry = tk.Entry(container, width=30, font=("Arial", 14))
+        self.full_name_entry.grid(row=4, column=0, pady=10, padx=20)
 
-        tk.Label(self, text="Пароль").pack(anchor="w", padx=5)
-        self.password_entry = tk.Entry(self, show="*")
-        self.password_entry.pack(fill="x", padx=5, pady=5)
+        # Поле для пароля
+        tk.Label(
+            container,
+            text="Пароль",
+            font=("Arial", 12),
+            bg="#1a76b9",
+            fg="#ffffff",
+        ).grid(row=5, column=0, sticky="w", padx=20)
+        self.password_entry = tk.Entry(container, show="*", width=30, font=("Arial", 14))
+        self.password_entry.grid(row=6, column=0, pady=10, padx=20)
 
         # Поле для подтверждения пароля
-        tk.Label(self, text="Подтвердите пароль").pack(anchor="w", padx=5)
-        self.confirm_password_entry = tk.Entry(self, show="*")
-        self.confirm_password_entry.pack(fill="x", padx=5, pady=5)
+        tk.Label(
+            container,
+            text="Подтвердите пароль",
+            font=("Arial", 12),
+            bg="#1a76b9",
+            fg="#ffffff",
+        ).grid(row=7, column=0, sticky="w", padx=20)
+        self.confirm_password_entry = tk.Entry(container, show="*", width=30, font=("Arial", 14))
+        self.confirm_password_entry.grid(row=8, column=0, pady=10, padx=20)
 
         # Кнопка регистрации
-        tk.Button(self, text="Зарегистрироваться", command=self.register).pack(pady=10)
-
-        # Кнопка для перехода к авторизации
         tk.Button(
-            self,
+            container,
+            text="Зарегистрироваться",
+            bg="#ffffff",
+            font=("Arial", 14),
+            command=self.register,
+            height=1,  # Высота кнопки
+            width=20,  # Ширина кнопки
+        ).grid(row=9, column=0, pady=20)
+
+        # Текст для перехода к авторизации
+        link = tk.Label(
+            container,
             text="Уже зарегистрированы? Авторизуйтесь",
-            command=self.on_switch_to_login,
-        ).pack(pady=5)
+            bg="#1a76b9",
+            fg="#ffffff",
+            font=("Arial", 12, "underline"),
+            cursor="hand2",
+        )
+        link.grid(row=10, column=0, pady=10)
+        link.bind("<Button-1>", lambda e: self.on_switch_to_login())
 
     def register(self):
         """Обрабатывает регистрацию пользователя."""
