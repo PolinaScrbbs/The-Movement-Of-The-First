@@ -60,7 +60,9 @@ class RegistrationForm(tk.Frame):
             bg="#1a76b9",
             fg="#ffffff",
         ).grid(row=5, column=0, sticky="w", padx=20)
-        self.password_entry = tk.Entry(container, show="*", width=30, font=("Arial", 14))
+        self.password_entry = tk.Entry(
+            container, show="*", width=30, font=("Arial", 14)
+        )
         self.password_entry.grid(row=6, column=0, pady=10, padx=20)
 
         # Поле для подтверждения пароля
@@ -71,7 +73,9 @@ class RegistrationForm(tk.Frame):
             bg="#1a76b9",
             fg="#ffffff",
         ).grid(row=7, column=0, sticky="w", padx=20)
-        self.confirm_password_entry = tk.Entry(container, show="*", width=30, font=("Arial", 14))
+        self.confirm_password_entry = tk.Entry(
+            container, show="*", width=30, font=("Arial", 14)
+        )
         self.confirm_password_entry.grid(row=8, column=0, pady=10, padx=20)
 
         # Кнопка регистрации

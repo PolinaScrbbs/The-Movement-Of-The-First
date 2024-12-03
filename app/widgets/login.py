@@ -50,7 +50,9 @@ class LoginForm(tk.Frame):
             bg="#1a76b9",
             fg="#ffffff",
         ).grid(row=3, column=0, sticky="w", padx=20)
-        self.password_entry = tk.Entry(container, show="*", width=30, font=("Arial", 14))
+        self.password_entry = tk.Entry(
+            container, show="*", width=30, font=("Arial", 14)
+        )
         self.password_entry.grid(row=4, column=0, pady=10, padx=20)
 
         # Кнопка авторизации

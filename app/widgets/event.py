@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
+from tkinter import font
 from tkcalendar import DateEntry
 from datetime import datetime
 import pytz
@@ -49,14 +50,12 @@ class EventApp:
         # Привязываем событие выбора
         self.event_tree.bind("<<TreeviewSelect>>", self.select_event)
 
-        # Добавляем кнопку добавления события для админов
-        if self.app.user.role == Role.ADMIN:
-            add_event_button = tk.Button(
-                tab, text="Добавить событие", command=self.add_event
-            )
-            add_event_button.pack(side="bottom", pady=5)
-
     def add_style(self, treeview):
+        style = ttk.Style()
+        style.configure(
+            "Treeview.Heading", font=("Arial", 11, "bold")
+        )  # Шрифт для заголовков
+        style.configure("Treeview", font=("Arial", 10))  # Общий шрифт для таблицы
         """Настройка стилей таблицы"""
         treeview.tag_configure("oddrow", background="#f9f9f9")
         treeview.tag_configure("evenrow", background="#ffffff")
@@ -98,19 +97,39 @@ class EventApp:
 
     def create_pagination_controls(self):
         """Создает элементы управления пагинацией"""
-        control_frame = tk.Frame(self.content_frame)
+        control_frame = tk.Frame(self.content_frame, background="#1a76b9")
         control_frame.pack(side="bottom", fill="x", pady=5)
 
-        prev_button = tk.Button(control_frame, text="Назад", command=self.prev_page)
+        prev_button = tk.Button(
+            control_frame,
+            text="Назад",
+            font=("Arial", 10, "bold"),
+            background="#ffffff",
+            command=self.prev_page,
+        )
         prev_button.pack(side="left", padx=5)
 
-        next_button = tk.Button(control_frame, text="Вперед", command=self.next_page)
+        next_button = tk.Button(
+            control_frame,
+            text="Вперед",
+            font=("Arial", 10, "bold"),
+            background="#ffffff",
+            command=self.next_page,
+        )
         next_button.pack(side="right", padx=5)
 
+        # Центральный контейнер для выравнивания текста
+        page_label_frame = tk.Frame(control_frame, bg="#1a76b9")
+        page_label_frame.pack(side="top", fill="x", padx=5)
+
         self.page_label = tk.Label(
-            control_frame, text=f"Страница {self.current_page} из {self.total_pages}"
+            page_label_frame,
+            text=f"Страница {self.current_page} из {self.total_pages}",
+            font=("Arial", 12, "bold"),
+            background="#1a76b9",
+            fg="#ffffff",
         )
-        self.page_label.pack(side="left", padx=5)
+        self.page_label.pack()
 
     def update_pagination_label(self):
         """Обновляет текст для текущей страницы"""

@@ -2,6 +2,8 @@ import tkinter as tk
 from typing import Optional
 from PIL import Image, ImageTk
 
+from app.models.user import Role
+
 from ..models import User
 from .profile import ProfileApp
 from .event import EventApp
@@ -56,19 +58,37 @@ class BaseApp(tk.Tk):
             self.center_frame = tk.Frame(self.navbar, background="#ffffff")
             self.center_frame.grid(row=0, column=1)
 
+            if self.user.role == Role.ADMIN:
+                self.add_event_button = tk.Button(
+                    self.center_frame,
+                    text="Add Event",  # Кнопка для добавления события
+                    command=self.event_app.add_event,  # Метод для добавления события
+                    bg="#1a76b9",
+                    fg="#ffffff",
+                    height=1,  # Высота кнопки
+                    width=10,  # Ширина кнопки
+                )
+
+                self.add_event_button.pack(side=tk.LEFT, padx=5)
+
             self.button1 = tk.Button(
                 self.center_frame,
                 text="Events",  # Кнопка для отображения событий
                 command=self.event_app.show_events,  # Используем метод из класса EventApp
-                bg="#ffffff",
+                bg="#1a76b9",
+                fg="#ffffff",
+                height=1,  # Высота кнопки
+                width=10,  # Ширина кнопки
             )
             self.button2 = tk.Button(
                 self.center_frame,
                 text="Rating",
                 command=self.rating_app.show_rating,
-                bg="#ffffff",
+                bg="#1a76b9",
+                fg="#ffffff",
+                height=1,  # Высота кнопки
+                width=10,  # Ширина кнопки
             )
-
             self.button1.pack(side=tk.LEFT, padx=5)
             self.button2.pack(side=tk.LEFT, padx=5)
 
@@ -150,8 +170,7 @@ class BaseApp(tk.Tk):
                 justify="center",
                 wraplength=600,
                 bg="#1a76b9",
-                fg="#ffffff"
-                
+                fg="#ffffff",
             )
             label.pack(pady=10)  # Отступ между текстом и кнопкой
 
@@ -163,7 +182,7 @@ class BaseApp(tk.Tk):
                 command=self.login_action,
                 width=15,
                 height=2,
-                background="#ffffff"
+                background="#ffffff",
             )
             login_button.pack(pady=10)  # Отступ под кнопкой
 
