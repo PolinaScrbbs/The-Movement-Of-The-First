@@ -382,79 +382,120 @@ class EventApp:
         # Создаем окно для ввода данных
         add_window = tk.Toplevel(self.app)
         add_window.title("Добавить событие")
+        add_window.config(bg="#1a76b9")
 
-        # Название события
-        tk.Label(add_window, text="Название:").grid(row=0, column=0, padx=10, pady=5)
-        title_entry = tk.Entry(add_window, width=21)
-        title_entry.grid(row=0, column=1, padx=10, pady=5)
+        # Установка сетки для главного контейнера
+        add_window.grid_rowconfigure(0, weight=1)
+        add_window.grid_columnconfigure(0, weight=1)
 
-        # Описание
-        tk.Label(add_window, text="Описание:").grid(row=1, column=0, padx=10, pady=5)
-        description_entry = tk.Entry(add_window, width=21)
-        description_entry.grid(row=1, column=1, padx=10, pady=5)
+        # Основной контейнер для выравнивания содержимого
+        container = tk.Frame(add_window, bg="#1a76b9")
+        container.grid(row=0, column=0, padx=20, pady=20)
+        container.grid_columnconfigure(1, weight=1)
+
+        # Заголовок
+        tk.Label(
+            container,
+            text="Добавить событие",
+            font=("Arial", 18, "bold"),
+            bg="#1a76b9",
+            fg="#ffffff",
+        ).grid(row=0, column=0, columnspan=3, pady=10)
+
+        # Поле для названия события
+        tk.Label(
+            container,
+            text="Название:",
+            font=("Arial", 12),
+            bg="#1a76b9",
+            fg="#ffffff",
+        ).grid(row=1, column=0, sticky="w", pady=5)
+        title_entry = tk.Entry(container, width=30, font=("Arial", 12))
+        title_entry.grid(row=1, column=1, columnspan=2, pady=5, padx=10)
+
+        # Поле для описания события
+        tk.Label(
+            container,
+            text="Описание:",
+            font=("Arial", 12),
+            bg="#1a76b9",
+            fg="#ffffff",
+        ).grid(row=2, column=0, sticky="w", pady=5)
+        description_entry = tk.Entry(container, width=30, font=("Arial", 12))
+        description_entry.grid(row=2, column=1, columnspan=2, pady=5, padx=10)
 
         # Тип события (раскрывающееся меню)
-        tk.Label(add_window, text="Тип:").grid(row=2, column=0, padx=10, pady=5)
-        event_type_combobox = ttk.Combobox(add_window, state="readonly", width=18)
+        tk.Label(
+            container,
+            text="Тип:",
+            font=("Arial", 12),
+            bg="#1a76b9",
+            fg="#ffffff",
+        ).grid(row=3, column=0, sticky="w", pady=5)
+        event_type_combobox = ttk.Combobox(container, state="readonly", font=("Arial", 12), width=27)
         event_type_combobox["values"] = [event_type.name for event_type in EventType]
-        event_type_combobox.grid(row=2, column=1, padx=10, pady=5)
-        event_type_combobox.set(
-            EventType.MEETING.name
-        )  # Устанавливаем значение по умолчанию
+        event_type_combobox.grid(row=3, column=1, columnspan=2, pady=5, padx=10)
+        event_type_combobox.set(EventType.MEETING.name)  # Значение по умолчанию
 
         # Дата и время начала
-        tk.Label(add_window, text="Дата и время начала:").grid(
-            row=3, column=0, padx=10, pady=5
-        )
+        tk.Label(
+            container,
+            text="Дата и время начала:",
+            font=("Arial", 12),
+            bg="#1a76b9",
+            fg="#ffffff",
+        ).grid(row=4, column=0, sticky="w", pady=5)
         start_at_date = DateEntry(
-            add_window, width=18, date_pattern="yyyy-mm-dd", state="normal"
+            container, width=15, date_pattern="yyyy-mm-dd", state="normal", font=("Arial", 12)
         )
-        start_at_date.grid(row=3, column=1, padx=10, pady=5)
-
-        start_at_time_combobox = ttk.Combobox(add_window, state="readonly", width=10)
+        start_at_date.grid(row=4, column=1, pady=5, padx=10, sticky="w")
+        start_at_time_combobox = ttk.Combobox(container, state="readonly", font=("Arial", 12), width=10)
         start_at_time_combobox["values"] = [
-            f"{hour:02d}:{minute:02d}"
-            for hour in range(24)
-            for minute in range(0, 60, 30)
+            f"{hour:02d}:{minute:02d}" for hour in range(24) for minute in range(0, 60, 30)
         ]
-        start_at_time_combobox.set("12:00")  # Значение по умолчанию
-        start_at_time_combobox.grid(row=3, column=2, padx=10, pady=5)
+        start_at_time_combobox.set("12:00")
+        start_at_time_combobox.grid(row=4, column=2, pady=5, padx=10, sticky="w")
 
         # Дата и время окончания
-        tk.Label(add_window, text="Дата и время окончания:").grid(
-            row=4, column=0, padx=10, pady=5
-        )
+        tk.Label(
+            container,
+            text="Дата и время окончания:",
+            font=("Arial", 12),
+            bg="#1a76b9",
+            fg="#ffffff",
+        ).grid(row=5, column=0, sticky="w", pady=5)
         end_at_date = DateEntry(
-            add_window, width=18, date_pattern="yyyy-mm-dd", state="normal"
+            container, width=15, date_pattern="yyyy-mm-dd", state="normal", font=("Arial", 12)
         )
-        end_at_date.grid(row=4, column=1, padx=10, pady=5)
-
-        end_at_time_combobox = ttk.Combobox(add_window, state="readonly", width=10)
+        end_at_date.grid(row=5, column=1, pady=5, padx=10, sticky="w")
+        end_at_time_combobox = ttk.Combobox(container, state="readonly", font=("Arial", 12), width=10)
         end_at_time_combobox["values"] = [
-            f"{hour:02d}:{minute:02d}"
-            for hour in range(24)
-            for minute in range(0, 60, 30)
+            f"{hour:02d}:{minute:02d}" for hour in range(24) for minute in range(0, 60, 30)
         ]
-        end_at_time_combobox.set("12:30")  # Значение по умолчанию
-        end_at_time_combobox.grid(row=4, column=2, padx=10, pady=5)
+        end_at_time_combobox.set("12:30")
+        end_at_time_combobox.grid(row=5, column=2, pady=5, padx=10, sticky="w")
 
         # Кнопка "Сохранить"
         save_button = tk.Button(
-            add_window,
+            container,
             text="Сохранить",
+            bg="#ffffff",
+            font=("Arial", 14),
             command=lambda: self.save_event(
                 title_entry.get(),
-                event_type_combobox.get(),  # Получаем выбранное значение
+                event_type_combobox.get(),
                 self.app.user.id,
-                start_at_date.get_date(),  # Получаем выбранную дату
-                start_at_time_combobox.get(),  # Получаем выбранное время начала
-                end_at_date.get_date(),  # Получаем выбранную дату
-                end_at_time_combobox.get(),  # Получаем выбранное время окончания
+                start_at_date.get_date(),
+                start_at_time_combobox.get(),
+                end_at_date.get_date(),
+                end_at_time_combobox.get(),
                 description_entry.get(),
                 add_window,
             ),
+            width=20,
+            height=1,
         )
-        save_button.grid(row=5, column=1, padx=10, pady=20)
+        save_button.grid(row=6, column=0, columnspan=3, pady=20)
 
     def save_event(
         self,
