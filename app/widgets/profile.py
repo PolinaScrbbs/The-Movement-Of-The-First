@@ -148,5 +148,3 @@ class ProfileApp(tk.Toplevel):
             # Перезапуск приложения
             self.app = self.app.__class__()  # Создаем новый экземпляр класса App
             self.app.mainloop()
-
-

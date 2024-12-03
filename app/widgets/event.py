@@ -258,7 +258,9 @@ class EventApp:
             if attendees:
                 # Создание Treeview только если есть отметившиеся
                 tree_frame = tk.Frame(self.content_frame, bg="#1a76b9")
-                tree_frame.place(relx=0.5, rely=0.7, anchor="center", relwidth=0.8, relheight=0.3)
+                tree_frame.place(
+                    relx=0.5, rely=0.7, anchor="center", relwidth=0.8, relheight=0.3
+                )
 
                 style = ttk.Style()
                 style.configure("Treeview", rowheight=25)
@@ -267,7 +269,9 @@ class EventApp:
                     font=("Arial", 12, "bold"),
                     anchor="center",  # Выровнять заголовки по центру
                 )
-                style.configure("Treeview", font=("Arial", 10), anchor="center")  # Выровнять строки
+                style.configure(
+                    "Treeview", font=("Arial", 10), anchor="center"
+                )  # Выровнять строки
 
                 tree = ttk.Treeview(
                     tree_frame,
@@ -285,7 +289,9 @@ class EventApp:
                 tree.pack(side="left", fill="both", expand=True)
 
                 # Добавление прокрутки
-                scrollbar = ttk.Scrollbar(tree_frame, orient="vertical", command=tree.yview)
+                scrollbar = ttk.Scrollbar(
+                    tree_frame, orient="vertical", command=tree.yview
+                )
                 scrollbar.pack(side="right", fill="y")
                 tree.configure(yscrollcommand=scrollbar.set)
 
@@ -329,11 +335,9 @@ class EventApp:
             command=self.show_events,
             bg="#ffffff",
             width=10,
-            height=1
+            height=1,
         )
         back_button.place(relx=0.5, rely=0.9, anchor="center")
-
-
 
     def add_star(self, event_id, user_id, tree, row_id):
         """Добавить звезду пользователю"""
@@ -432,7 +436,9 @@ class EventApp:
             bg="#1a76b9",
             fg="#ffffff",
         ).grid(row=3, column=0, sticky="w", pady=5)
-        event_type_combobox = ttk.Combobox(container, state="readonly", font=("Arial", 12), width=27)
+        event_type_combobox = ttk.Combobox(
+            container, state="readonly", font=("Arial", 12), width=27
+        )
         event_type_combobox["values"] = [event_type.name for event_type in EventType]
         event_type_combobox.grid(row=3, column=1, columnspan=2, pady=5, padx=10)
         event_type_combobox.set(EventType.MEETING.name)  # Значение по умолчанию
@@ -446,12 +452,20 @@ class EventApp:
             fg="#ffffff",
         ).grid(row=4, column=0, sticky="w", pady=5)
         start_at_date = DateEntry(
-            container, width=15, date_pattern="yyyy-mm-dd", state="normal", font=("Arial", 12)
+            container,
+            width=15,
+            date_pattern="yyyy-mm-dd",
+            state="normal",
+            font=("Arial", 12),
         )
         start_at_date.grid(row=4, column=1, pady=5, padx=10, sticky="w")
-        start_at_time_combobox = ttk.Combobox(container, state="readonly", font=("Arial", 12), width=10)
+        start_at_time_combobox = ttk.Combobox(
+            container, state="readonly", font=("Arial", 12), width=10
+        )
         start_at_time_combobox["values"] = [
-            f"{hour:02d}:{minute:02d}" for hour in range(24) for minute in range(0, 60, 30)
+            f"{hour:02d}:{minute:02d}"
+            for hour in range(24)
+            for minute in range(0, 60, 30)
         ]
         start_at_time_combobox.set("12:00")
         start_at_time_combobox.grid(row=4, column=2, pady=5, padx=10, sticky="w")
@@ -465,12 +479,20 @@ class EventApp:
             fg="#ffffff",
         ).grid(row=5, column=0, sticky="w", pady=5)
         end_at_date = DateEntry(
-            container, width=15, date_pattern="yyyy-mm-dd", state="normal", font=("Arial", 12)
+            container,
+            width=15,
+            date_pattern="yyyy-mm-dd",
+            state="normal",
+            font=("Arial", 12),
         )
         end_at_date.grid(row=5, column=1, pady=5, padx=10, sticky="w")
-        end_at_time_combobox = ttk.Combobox(container, state="readonly", font=("Arial", 12), width=10)
+        end_at_time_combobox = ttk.Combobox(
+            container, state="readonly", font=("Arial", 12), width=10
+        )
         end_at_time_combobox["values"] = [
-            f"{hour:02d}:{minute:02d}" for hour in range(24) for minute in range(0, 60, 30)
+            f"{hour:02d}:{minute:02d}"
+            for hour in range(24)
+            for minute in range(0, 60, 30)
         ]
         end_at_time_combobox.set("12:30")
         end_at_time_combobox.grid(row=5, column=2, pady=5, padx=10, sticky="w")
