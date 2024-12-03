@@ -296,9 +296,9 @@ class EventApp:
                     )
 
                     action_text = "Звезда выдана" if has_star else "Добавить звезду"
-                    button_state = tk.DISABLED if has_star else tk.NORMAL
+                    # button_state = tk.DISABLED if has_star else tk.NORMAL
 
-                    row_id = tree.insert(
+                    tree.insert(
                         "",
                         "end",
                         values=(
