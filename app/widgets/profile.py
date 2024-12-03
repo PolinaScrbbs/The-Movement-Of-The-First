@@ -10,18 +10,26 @@ from ..queries import update_user_avatar
 
 
 class ProfileApp(tk.Toplevel):
-    def __init__(self, parent, user: User):
+    def __init__(self, parent, user: User, app):
         super().__init__(parent)
-        self.title(f"Profile: {user.username}")
+        self.title(f"Профиль: {user.username}")
         self.geometry("400x400")
         self.parent = parent
         self.user = user
+        self.app = app  # Сохраняем ссылку на приложение
+
+        # Установка фона
+        self.configure(bg="#1a76b9")
 
         # Отображаем информацию о пользователе
         self.create_profile_content()
 
     def create_profile_content(self):
         """Создаем интерфейс профиля"""
+
+        # Основной контейнер для выравнивания содержимого
+        container = tk.Frame(self, bg="#1a76b9")
+        container.pack(expand=True, fill="both", pady=20)
 
         # Загружаем аватарку
         if self.user.avatar_url:
@@ -35,26 +43,57 @@ class ProfileApp(tk.Toplevel):
         self.profile_image_tk = ImageTk.PhotoImage(profile_image)
 
         # Создаём и отображаем Label с изображением
-        self.image_label = tk.Label(self, image=self.profile_image_tk, cursor="hand2")
+        self.image_label = tk.Label(
+            container,
+            image=self.profile_image_tk,
+            bg="#1a76b9",
+            cursor="hand2",
+        )
         self.image_label.pack(pady=10)
 
         # Делаем аватарку кликабельной
         self.image_label.bind("<Button-1>", self.change_avatar)
 
+        # Имя пользователя
         username_label = tk.Label(
-            self, text=f"@{self.user.username}", font=("Arial", 14)
+            container,
+            text=f"@{self.user.username}",
+            font=("Arial", 14, "bold"),
+            bg="#1a76b9",
+            fg="#ffffff",
         )
         username_label.pack(pady=5)
 
+        # Полное имя пользователя
         full_name_label = tk.Label(
-            self,
+            container,
             text=f"{self.user.get_full_name_initials()}",
-            font=("Arial", 14),
+            font=("Arial", 12),
+            bg="#1a76b9",
+            fg="#ffffff",
         )
         full_name_label.pack(pady=5)
 
-        role_label = tk.Label(self, text=f"{self.user.role.value}", font=("Arial", 14))
+        # Роль пользователя
+        role_label = tk.Label(
+            container,
+            text=f"{self.user.role.value}",
+            font=("Arial", 12),
+            bg="#1a76b9",
+            fg="#ffffff",
+        )
         role_label.pack(pady=5)
+
+        # Кнопка выхода (например)
+        tk.Button(
+            container,
+            text="Выйти",
+            bg="#ffffff",
+            font=("Arial", 14),
+            command=self.logout,
+            height=1,
+            width=20,
+        ).pack(pady=20)
 
     def change_avatar(self, event):
         """Открывает проводник для выбора нового аватара"""
@@ -99,3 +138,15 @@ class ProfileApp(tk.Toplevel):
         profile_image = Image.open(avatar_path).resize((100, 100))
         self.profile_image_tk = ImageTk.PhotoImage(profile_image)
         self.image_label.configure(image=self.profile_image_tk)
+
+    def logout(self):
+        """Функция выхода"""
+        if messagebox.askyesno("Подтверждение", "Вы действительно хотите выйти?"):
+            # Закрываем приложение
+            self.app.destroy()
+
+            # Перезапуск приложения
+            self.app = self.app.__class__()  # Создаем новый экземпляр класса App
+            self.app.mainloop()
+
+

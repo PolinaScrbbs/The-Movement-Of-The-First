@@ -142,10 +142,10 @@ class BaseApp(tk.Tk):
         self.profile_icon = ImageTk.PhotoImage(icon_image)
         self.profile_label.configure(image=self.profile_icon)
 
-    def open_profile(self, event):
+    def open_profile(self, event=None):
         """Открытие окна профиля"""
         if self.user:
-            ProfileApp(self, self.user)
+            ProfileApp(self, self.user, self)
 
     def switch_page(self, page_name):
         """Переключение контента"""
