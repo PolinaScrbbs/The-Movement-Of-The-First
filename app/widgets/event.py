@@ -300,11 +300,9 @@ class EventApp:
                     has_star = check_event_star_exists(
                         get_session(), attendee.id, event_id
                     )
-
                     action_text = "Звезда выдана" if has_star else "Добавить звезду"
-                    # button_state = tk.DISABLED if has_star else tk.NORMAL
-
-                    tree.insert(
+                    button_state = tk.DISABLED if has_star else tk.NORMAL
+                    row_id = tree.insert(
                         "",
                         "end",
                         values=(
@@ -314,6 +312,17 @@ class EventApp:
                             action_text,
                         ),
                     )
+                    if not has_star:
+                        btn = tk.Button(
+                            self.content_frame,
+                            text="Добавить звезду",
+                            state=button_state,
+                            command=lambda aid=attendee.id: self.add_star(
+                                event_id, aid, tree, row_id
+                            ),
+                        )
+                        tree.item(row_id, tags=(row_id,))
+                        tree.tag_bind(row_id, "<Double-1>", lambda e, b=btn: b.invoke())
 
             else:
                 # Если никто не отметился
